@@ -1,4 +1,7 @@
-const puppeteer = require('puppeteer');
+"use strict";
+
+import * as puppeteer from "puppeteer"
+//const puppeteer = require('puppeteer');
 
 const visitanyPage = async () => {
     const browser = await puppeteer.launch({headless: false});
