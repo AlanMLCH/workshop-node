@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run build && node src/index.js",
+    "test2": "npm run build && node src/test.js",
+    "test3": "npm run build && node src/ejercicio1.js",
+    "test4": "npm run build && node src/ejercicio2.js",
     "build": "tsc"
   },
   "repository": {
