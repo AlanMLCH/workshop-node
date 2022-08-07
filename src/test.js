@@ -42,7 +42,7 @@ const visitanyPage = () => __awaiter(void 0, void 0, void 0, function* () {
         ;
         return resultArr;
     });
-    createJson({ title: pageTitle, Categorías: pageCategories, Breadcrumbs: pageBreadcrumbs });
+    createJson({ pageTitle, pageCategories, pageBreadcrumbs });
     yield browser.close();
 });
 const createJson = (obj) => {

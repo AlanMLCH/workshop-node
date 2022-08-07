@@ -1,8 +1,10 @@
-import * as fs from 'fs';
-const puppeteer = require('puppeteer');
+"use strict";
 
 
-const urls = ["https://phys.org/news/2022-08-miniature-lens-atoms.html&p=1"];
+import * as puppeteer from "puppeteer";
+import * as fs from "fs";
+
+const urls = "https://phys.org/news/2022-08-miniature-lens-atoms.html&p=1";
 
 const createJson = (obj:{}): void =>{
     fs.writeFile("output.json", JSON.stringify(obj, null, 2), "utf8", (error) => {
@@ -11,16 +13,15 @@ const createJson = (obj:{}): void =>{
     });
 };
 
-const visitanyPage = async (url: string): Promise<IDisco[]> => {
+interface IDisco{
+    name: string;
+    price: string;
+}[];
+
+const visitanyPage = async (urls: string): Promise<IDisco[]> => {
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
-    await page.goto("https://phys.org/news/2022-08-miniature-lens-atoms.html");
-
-
-    interface IDisco{
-        name: string;
-        price: string;
-    }[];
+    await page.goto(urls);
 
 
     const breadcrumbs = await page.evaluate(()=>{
@@ -43,23 +44,23 @@ const visitanyPage = async (url: string): Promise<IDisco[]> => {
         return result2;
     })
 
-    const result = {breadcrumbs}
-    createJson(discos)
+    const result = {discos};
     createJson(result)
 
-    const nextUrl = await page.evaluate(()=>{
-
+    const nextUrl = await page.evaluate((urldeseada)=>{
+        let nuevaUrl = document.querySelector(".pages .next").getAttribute("href");
+        if(Number(nuevaUrl.match(/(?<=p\=)([\s\S])/g)) <= urldeseada){
+            location.href = nuevaUrl;
+        }
     })
-
     await browser.close();
-    return discos;
 };
 
 const crawlSite = async () => {
     const result = [];
 
     for (let url of urls) {
-        const discos = await scraperPage(url);
+        const discos = await visitanyPage(url);
         result.push(...discos);
     }
 

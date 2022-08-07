@@ -1,6 +1,6 @@
 {
-  "title": "\nLibros\n",
-  "Categorías": [
+  "pageTitle": "\nLibros\n",
+  "pageCategories": [
     "\nArte, Arquitectura y Diseño\n",
     "\nAutoayuda\n",
     "\nCiencias de la Salud, Naturales y Divulgación Científica\n",
@@ -20,7 +20,7 @@
     "\nVisuales\n",
     "\nTextos\n"
   ],
-  "Breadcrumbs": [
+  "pageBreadcrumbs": [
     "\nInicio\n",
     "\nLibros\n"
   ]

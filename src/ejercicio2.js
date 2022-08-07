@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const puppeteer = require("puppeteer");
 const fs = require("fs");
-const puppeteer = require('puppeteer');
-const urls = ["https://phys.org/news/2022-08-miniature-lens-atoms.html&p=1"];
+const urls = "https://phys.org/news/2022-08-miniature-lens-atoms.html&p=1";
 const createJson = (obj) => {
     fs.writeFile("output.json", JSON.stringify(obj, null, 2), "utf8", (error) => {
         if (error)
@@ -19,11 +19,11 @@ const createJson = (obj) => {
         console.log("Sale todo bien");
     });
 };
-const visitanyPage = (url) => __awaiter(void 0, void 0, void 0, function* () {
+[];
+const visitanyPage = (urls) => __awaiter(void 0, void 0, void 0, function* () {
     const browser = yield puppeteer.launch({ headless: false });
     const page = yield browser.newPage();
-    yield page.goto("https://phys.org/news/2022-08-miniature-lens-atoms.html");
-    [];
+    yield page.goto(urls);
     const breadcrumbs = yield page.evaluate(() => {
         var _a;
         const result = (_a = document.querySelector('[aria-label="breadcrumb"]')) === null || _a === void 0 ? void 0 : _a.textContent;
@@ -40,18 +40,20 @@ const visitanyPage = (url) => __awaiter(void 0, void 0, void 0, function* () {
         }
         return result2;
     });
-    const result = { breadcrumbs };
-    createJson(discos);
+    const result = { discos };
     createJson(result);
-    const nextUrl = yield page.evaluate(() => {
+    const nextUrl = yield page.evaluate((urldeseada) => {
+        let nuevaUrl = document.querySelector(".pages .next").getAttribute("href");
+        if (Number(nuevaUrl.match(/(?<=p\=)([\s\S])/g)) <= urldeseada) {
+            location.href = nuevaUrl;
+        }
     });
     yield browser.close();
-    return discos;
 });
 const crawlSite = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = [];
     for (let url of urls) {
-        const discos = yield scraperPage(url);
+        const discos = yield visitanyPage(url);
         result.push(...discos);
     }
     createJson(result);

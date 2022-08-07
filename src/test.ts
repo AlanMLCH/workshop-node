@@ -36,7 +36,7 @@ const visitanyPage = async () => {
         return resultArr;
     });
 
-    createJson({title : pageTitle, Categorías: pageCategories, Breadcrumbs : pageBreadcrumbs})
+    createJson({pageTitle, pageCategories, pageBreadcrumbs})
     await browser.close();
 };
 
