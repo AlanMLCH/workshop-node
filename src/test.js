@@ -11,10 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer = require("puppeteer");
 const fs = require("fs");
-const visitanyPage = () => __awaiter(void 0, void 0, void 0, function* () {
+let url = "https://www.tematika.com/libros?limit=40&p=1";
+const scrapAnyPage = (url) => __awaiter(void 0, void 0, void 0, function* () {
     const browser = yield puppeteer.launch({ headless: false });
     const page = yield browser.newPage();
-    yield page.goto("https://www.tematika.com/libros?limit=40&p=1");
+    yield page.goto(url);
     const pageTitle = yield page.evaluate(() => {
         var _a;
         const result = (_a = document.querySelector("#jm-container .page-title")) === null || _a === void 0 ? void 0 : _a.textContent;
@@ -52,4 +53,4 @@ const createJson = (obj) => {
         console.log("Todo está OK nwn");
     });
 };
-visitanyPage();
+scrapAnyPage(url);

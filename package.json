@@ -8,6 +8,7 @@
     "test2": "npm run build && node src/test.js",
     "test3": "npm run build && node src/ejercicio1.js",
     "test4": "npm run build && node src/ejercicio2.js",
+    "test5": "npm run build && node src/pruebas.js",
     "build": "tsc"
   },
   "repository": {

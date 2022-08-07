@@ -3,17 +3,19 @@
 import * as puppeteer from "puppeteer"
 import * as fs from "fs";
 
-const visitanyPage = async () => {
+let url = "https://www.tematika.com/libros?limit=40&p=1";
+
+const scrapAnyPage = async (url:string):Promise<any> => {
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
-    await page.goto("https://www.tematika.com/libros?limit=40&p=1");
+    await page.goto(url);
     
-    const pageTitle = await page.evaluate(()=>{
+    const pageTitle:string = await page.evaluate(()=>{
         const result = document.querySelector("#jm-container .page-title")?.textContent;
         return result;
     });
 
-    const pageBreadcrumbs = await page.evaluate(()=>{
+    const pageBreadcrumbs:string[] = await page.evaluate(()=>{
         const result = [];
         if(document.querySelectorAll(".breadcrumbs li")){
             const unclearBreadcrumb = Array.from(document.querySelectorAll(".breadcrumbs li"));
@@ -27,7 +29,7 @@ const visitanyPage = async () => {
         return result;
     });
 
-    const pageCategories = await page.evaluate(()=>{
+    const pageCategories:string[] = await page.evaluate(()=>{
         const resultArr = [];
         const result = Array.from(document.querySelectorAll("#narrow-by-list ol li"));
         for(let e of result){
@@ -40,11 +42,11 @@ const visitanyPage = async () => {
     await browser.close();
 };
 
-const createJson = (obj) =>{
+const createJson = (obj:{}):void =>{
     fs.writeFile("test.json", JSON.stringify(obj, null, 2), "utf8", (error) => {
         if(error) throw error;
         console.log("Todo está OK nwn")
     });
 };
 
-visitanyPage();
+scrapAnyPage(url);

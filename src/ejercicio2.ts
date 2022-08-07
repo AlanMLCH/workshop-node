@@ -1,70 +1,47 @@
 "use strict";
 
-
-import * as puppeteer from "puppeteer";
+import * as puppeteer from "puppeteer"
 import * as fs from "fs";
+let url = "https://www.tematika.com/libros?limit=40&p=1"; 
 
-const urls = "https://phys.org/news/2022-08-miniature-lens-atoms.html&p=1";
-
-const createJson = (obj:{}): void =>{
-    fs.writeFile("output.json", JSON.stringify(obj, null, 2), "utf8", (error) => {
-        if(error) throw error;
-        console.log("Sale todo bien")
-    });
-};
-
-interface IDisco{
-    name: string;
-    price: string;
-}[];
-
-const visitanyPage = async (urls: string): Promise<IDisco[]> => {
+const visitanyPage = async (url:string):Promise<any> => {
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
-    await page.goto(urls);
+    await page.goto(url);
+    
+    interface iBooks{
+        name: string;
+        price: number;
+        image: string;
+        author: string
+    }[];
 
-
-    const breadcrumbs = await page.evaluate(()=>{
-        const result = document.querySelector('[aria-label="breadcrumb"]')?.textContent
-        return result;
-    })
-
-    const discos: IDisco[] = await page.evaluate(()=>{
-        const result2: IDisco[] = []
-        const discos = Array.from(
+    const booksList:iBooks[] = await page.evaluate(() =>{
+        const discoResult:iBooks[] = [];
+        const books = Array.from(
             document.querySelectorAll("ul.products-grid li.item")
         );
 
-        for(let disco of discos){
-            const name = disco.querySelector("h5.product-name a")?.textContent;
-            const price = disco.querySelector("span.price")?.textContent;
-            result2.push({ name, price});
+        for(let book of books){
+            const name = book.querySelector("h5.product-name a")?.textContent;
+            const price = Number(book.querySelector("span.price")?.textContent);
+            const image = book.querySelector(".product-image img")?.getAttribute("src");
+            const author = book.querySelector(".product-information .author")?.textContent;
+            discoResult.push({ name, price, image, author});
         }
 
-        return result2;
+        return discoResult;
     })
 
-    const result = {discos};
-    createJson(result)
-
-    const nextUrl = await page.evaluate((urldeseada)=>{
-        let nuevaUrl = document.querySelector(".pages .next").getAttribute("href");
-        if(Number(nuevaUrl.match(/(?<=p\=)([\s\S])/g)) <= urldeseada){
-            location.href = nuevaUrl;
-        }
-    })
+    createJson({booksList})
     await browser.close();
 };
 
-const crawlSite = async () => {
-    const result = [];
-
-    for (let url of urls) {
-        const discos = await visitanyPage(url);
-        result.push(...discos);
-    }
-
-    createJson(result);
+const createJson = (obj:{}):void =>{
+    fs.writeFile("ejercicio1.json", JSON.stringify(obj, null, 2), "utf8", (error) => {
+        if(error) throw error;
+        console.log("Todo está OK nwn")
+    });
 };
 
-crawlSite();
+visitanyPage(url);
