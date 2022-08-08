@@ -4,14 +4,14 @@ import * as puppeteer from "puppeteer"
 import * as fs from "fs";
 let url = "https://www.tematika.com/libros?limit=40&p=1"; 
 
-const visitanyPage = async (url:string):Promise<any> => {
+const  scrapAnyPage= async (url:string):Promise<any> => {
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
     await page.goto(url);
     
     interface iBooks{
         name: string;
-        price: number;
+        price: string;
         image: string;
         author: string
     }[];
@@ -24,7 +24,7 @@ const visitanyPage = async (url:string):Promise<any> => {
 
         for(let book of books){
             const name = book.querySelector("h5.product-name a")?.textContent;
-            const price = Number(book.querySelector("span.price")?.textContent);
+            const price = book.querySelector("span.price")?.textContent;
             const image = book.querySelector(".product-image img")?.getAttribute("src");
             const author = book.querySelector(".product-information .author")?.textContent;
             discoResult.push({ name, price, image, author});
@@ -44,4 +44,4 @@ const createJson = (obj:{}):void =>{
     });
 };
 
-visitanyPage(url);
+scrapAnyPage(url);

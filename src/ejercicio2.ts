@@ -2,46 +2,78 @@
 
 import * as puppeteer from "puppeteer"
 import * as fs from "fs";
-let url = "https://www.tematika.com/libros?limit=40&p=1"; 
+let urls = "https://www.tematika.com/libros?limit=40&p=1"; 
+let results = [];
 
-const visitanyPage = async (url:string):Promise<any> => {
+const  scrapAnyPage= async (url:string):Promise<any> => {
     const browser = await puppeteer.launch({headless: false});
+    let urls = "";
+    urls = url;
     const page = await browser.newPage();
     await page.goto(url);
     
     interface iBooks{
         name: string;
-        price: number;
+        price: string;
         image: string;
         author: string
     }[];
 
     const booksList:iBooks[] = await page.evaluate(() =>{
-        const discoResult:iBooks[] = [];
+        const bookResult:iBooks[] = [];
         const books = Array.from(
             document.querySelectorAll("ul.products-grid li.item")
         );
 
         for(let book of books){
             const name = book.querySelector("h5.product-name a")?.textContent;
-            const price = Number(book.querySelector("span.price")?.textContent);
+            const price = book.querySelector("span.price")?.textContent;
             const image = book.querySelector(".product-image img")?.getAttribute("src");
             const author = book.querySelector(".product-information .author")?.textContent;
-            discoResult.push({ name, price, image, author});
+            bookResult.push({ name, price, image, author});
         }
 
-        return discoResult;
+        return bookResult;
     })
 
-    createJson({booksList})
+    
+   async function recursivePages(){
+    let currentPage = await page.$eval(".pages .current", el => el.textContent)
+    let nextPage = await page.$eval(".pages .next ", el => el.getAttribute("href"))
+    if (Number(currentPage) < 25) {
+        //await page.click(".pages .next")
+        urls = nextPage;
+        //await page.goto(urls);
+        
+        scrapAnyPage(urls);
+    }
+   }
+   results.push(...booksList);
+    recursivePages();
+    createJson(results);
     await browser.close();
+    
 };
 
 const createJson = (obj:{}):void =>{
-    fs.writeFile("ejercicio1.json", JSON.stringify(obj, null, 2), "utf8", (error) => {
+    fs.writeFile("ejercicio2.json", JSON.stringify(obj, null, 2), "utf8", (error) => {
         if(error) throw error;
         console.log("Todo está OK nwn")
     });
 };
 
-visitanyPage(url);
+
+// const crawlSite = async (scrapAnyPage: string[]) => {
+//     const result = [];
+
+//     for (let url of urls) {
+//         const discos = await scrapAnyPage(url);
+//         result.push(...discos);
+//     }
+
+//     createJson({result});
+// };
+
+// crawlSite(urls);
+
+scrapAnyPage(urls);
