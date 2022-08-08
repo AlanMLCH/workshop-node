@@ -14,7 +14,7 @@ const  scrapAnyPage= async (url:string):Promise<any> => {
     
     interface iBooks{
         name: string;
-        price: string;
+        price: number;
         image: string;
         author: string
     }[];
@@ -27,7 +27,7 @@ const  scrapAnyPage= async (url:string):Promise<any> => {
 
         for(let book of books){
             const name = book.querySelector("h5.product-name a")?.textContent;
-            const price = book.querySelector("span.price")?.textContent;
+            const price = parseFloat(book.querySelector("span.price")?.textContent.replace(/\$|\./g, '').replace(/,/g, '.').trim());
             const image = book.querySelector(".product-image img")?.getAttribute("src");
             const author = book.querySelector(".product-information .author")?.textContent;
             bookResult.push({ name, price, image, author});
