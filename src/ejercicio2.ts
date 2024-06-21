@@ -26,7 +26,7 @@ const  scrapAnyPage= async (url:string):Promise<any> => {
         );
 
         for(let book of books){
-            const name = book.querySelector("h5.product-name a")?.textContent;
+            const name = book.querySelector("h5.product-name a")?.getAttribute("title");
             const price = parseFloat(book.querySelector("span.price")?.textContent.replace(/\$|\./g, '').replace(/,/g, '.').trim());
             const image = book.querySelector(".product-image img")?.getAttribute("src");
             const author = book.querySelector(".product-information .author")?.textContent;
@@ -37,7 +37,7 @@ const  scrapAnyPage= async (url:string):Promise<any> => {
     })
 
     
-   async function recursivePages(){
+   async function recursivePages():Promise<void>{
     let currentPage = await page.$eval(".pages .current", el => el.textContent)
     let nextPage = await page.$eval(".pages .next ", el => el.getAttribute("href"))
     if (Number(currentPage) < 25) {
